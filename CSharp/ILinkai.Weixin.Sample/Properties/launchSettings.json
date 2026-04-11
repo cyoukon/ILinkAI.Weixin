@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ILinkai.Weixin.Sample": {
+      "commandName": "Project",
+      "commandLineArgs": "full"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ILinkai.Weixin.Sdk/ILinkai.Weixin.Sdk.csproj" />
+  <Project Path="ILinkai.Weixin.Cli/ILinkai.Weixin.Cli.csproj" />
+  <Project Path="ILinkai.Weixin.Sample/ILinkai.Weixin.Sample.csproj" />
+</Solution>

@@ -1,0 +1,42 @@
+# === C# / .NET ===
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+*.pdb
+*.nupkg
+*.snupkg
+
+# === Java ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+
+# === IDE / OS ===
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
