@@ -17,14 +17,23 @@ public class CdnClient {
     /** 上传缓冲区到CDN（带AES-128-ECB加密） */
     public String uploadBuffer(byte[] buffer, String uploadParam, String fileKey,
                                String cdnBaseUrl, byte[] aesKey, String label) throws CdnException {
+        String cdnUrl = CdnUrlBuilder.buildUploadUrl(uploadParam, fileKey, cdnBaseUrl);
+        return uploadBufferCore(buffer, cdnUrl, aesKey, label);
+    }
+
+    /** 上传缓冲区到CDN（使用完整URL） */
+    public String uploadBufferByUrl(byte[] buffer, String uploadFullUrl,
+                                     byte[] aesKey, String label) throws CdnException {
+        return uploadBufferCore(buffer, uploadFullUrl, aesKey, label);
+    }
+
+    private String uploadBufferCore(byte[] buffer, String cdnUrl, byte[] aesKey, String label) throws CdnException {
         byte[] ciphertext;
         try {
             ciphertext = AesEcbCrypto.encrypt(buffer, aesKey);
         } catch (Exception e) {
             throw new CdnException("AES encryption failed: " + e.getMessage());
         }
-
-        String cdnUrl = CdnUrlBuilder.buildUploadUrl(uploadParam, fileKey, cdnBaseUrl);
         logger.debug("{}: CDN POST url={} ciphertextSize={}", label, redactUrl(cdnUrl), ciphertext.length);
 
         Exception lastError = null;

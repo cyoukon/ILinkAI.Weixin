@@ -96,21 +96,35 @@ public class MediaUploadService
             AesKey = Convert.ToHexString(aesKey).ToLowerInvariant()
         }, cancellationToken);
 
-        var uploadParam = uploadUrlResp.UploadParam;
-        if (string.IsNullOrEmpty(uploadParam))
-        {
-            _logger?.LogError("UploadFile: getUploadUrl returned no upload_param");
-            throw new InvalidOperationException("getUploadUrl returned no upload_param");
-        }
+        string downloadParam;
 
-        var downloadParam = await _cdnClient.UploadBufferAsync(
-            plaintext,
-            uploadParam,
-            fileKey,
-            _cdnBaseUrl,
-            aesKey,
-            $"UploadFile[fileKey={fileKey}]",
-            cancellationToken);
+        if (!string.IsNullOrEmpty(uploadUrlResp.UploadFullUrl))
+        {
+            downloadParam = await _cdnClient.UploadBufferByUrlAsync(
+                plaintext,
+                uploadUrlResp.UploadFullUrl,
+                aesKey,
+                $"UploadFile[fileKey={fileKey}]",
+                cancellationToken);
+        }
+        else
+        {
+            var uploadParam = uploadUrlResp.UploadParam;
+            if (string.IsNullOrEmpty(uploadParam))
+            {
+                _logger?.LogError("UploadFile: getUploadUrl returned no upload_param and no upload_full_url");
+                throw new InvalidOperationException("getUploadUrl returned no upload_param and no upload_full_url");
+            }
+
+            downloadParam = await _cdnClient.UploadBufferAsync(
+                plaintext,
+                uploadParam,
+                fileKey,
+                _cdnBaseUrl,
+                aesKey,
+                $"UploadFile[fileKey={fileKey}]",
+                cancellationToken);
+        }
 
         return new UploadedFileInfo
         {

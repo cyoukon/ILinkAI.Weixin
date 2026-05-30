@@ -29,8 +29,15 @@ class CdnClient:
     def upload_buffer(self, buffer: bytes, upload_param: str, file_key: str,
                       cdn_base_url: str, aes_key: bytes, label: str = "upload") -> str:
         """上传缓冲区到CDN（带AES-128-ECB加密）"""
-        ciphertext = AesEcbCrypto.encrypt(buffer, aes_key)
         cdn_url = CdnUrlBuilder.build_upload_url(upload_param, file_key, cdn_base_url)
+        return self._upload_core(buffer, cdn_url, aes_key, label)
+
+    def upload_buffer_by_url(self, buffer: bytes, upload_full_url: str,
+                             aes_key: bytes, label: str = "upload") -> str:
+        return self._upload_core(buffer, upload_full_url, aes_key, label)
+
+    def _upload_core(self, buffer: bytes, cdn_url: str, aes_key: bytes, label: str) -> str:
+        ciphertext = AesEcbCrypto.encrypt(buffer, aes_key)
         logger.debug("%s: CDN POST url=%s ciphertextSize=%d", label, _redact_url(cdn_url), len(ciphertext))
 
         last_error = None

@@ -44,13 +44,18 @@ class MediaUploadService:
             no_need_thumb=True, aes_key=aes_key.hex(),
         )
         upload_url_resp = self._api_client.get_upload_url(request)
-        upload_param = upload_url_resp.upload_param
-        if not upload_param:
-            raise RuntimeError("getUploadUrl returned no upload_param")
 
-        download_param = self._cdn_client.upload_buffer(
-            plaintext, upload_param, file_key, self._cdn_base_url, aes_key,
-            f"UploadFile[fileKey={file_key}]")
+        if upload_url_resp.upload_full_url:
+            download_param = self._cdn_client.upload_buffer_by_url(
+                plaintext, upload_url_resp.upload_full_url, aes_key,
+                f"UploadFile[fileKey={file_key}]")
+        else:
+            upload_param = upload_url_resp.upload_param
+            if not upload_param:
+                raise RuntimeError("getUploadUrl returned no upload_param and no upload_full_url")
+            download_param = self._cdn_client.upload_buffer(
+                plaintext, upload_param, file_key, self._cdn_base_url, aes_key,
+                f"UploadFile[fileKey={file_key}]")
 
         return UploadedFileInfo(
             file_key=file_key, download_encrypted_query_param=download_param,
