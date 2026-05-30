@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -69,7 +70,7 @@ public class MessageSendService {
         MessageItems.ImageItem img = new MessageItems.ImageItem();
         CdnMedia media = new CdnMedia();
         media.setEncryptQueryParam(uploaded.downloadEncryptedQueryParam);
-        media.setAesKey(Base64.getEncoder().encodeToString(hexStringToBytes(uploaded.aesKey)));
+        media.setAesKey(Base64.getEncoder().encodeToString(uploaded.aesKey.getBytes(StandardCharsets.UTF_8)));
         media.setEncryptType(1);
         img.setMedia(media);
         img.setMidSize(uploaded.fileSizeCiphertext);
@@ -88,7 +89,7 @@ public class MessageSendService {
         MessageItems.VideoItem vi = new MessageItems.VideoItem();
         CdnMedia media = new CdnMedia();
         media.setEncryptQueryParam(uploaded.downloadEncryptedQueryParam);
-        media.setAesKey(Base64.getEncoder().encodeToString(hexStringToBytes(uploaded.aesKey)));
+        media.setAesKey(Base64.getEncoder().encodeToString(uploaded.aesKey.getBytes(StandardCharsets.UTF_8)));
         media.setEncryptType(1);
         vi.setMedia(media);
         vi.setVideoSize(uploaded.fileSizeCiphertext);
@@ -108,7 +109,7 @@ public class MessageSendService {
         MessageItems.FileItem fi = new MessageItems.FileItem();
         CdnMedia media = new CdnMedia();
         media.setEncryptQueryParam(uploaded.downloadEncryptedQueryParam);
-        media.setAesKey(Base64.getEncoder().encodeToString(hexStringToBytes(uploaded.aesKey)));
+        media.setAesKey(Base64.getEncoder().encodeToString(uploaded.aesKey.getBytes(StandardCharsets.UTF_8)));
         media.setEncryptType(1);
         fi.setMedia(media);
         fi.setFileName(fileName);
