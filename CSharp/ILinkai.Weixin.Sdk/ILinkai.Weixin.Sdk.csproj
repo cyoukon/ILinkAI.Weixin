@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>ILinkai.Weixin.Sdk</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.3</Version>
     <Authors>Tencent</Authors>
     <Description>ILinkai Weixin SDK - A comprehensive SDK for ilinkai.weixin.qq.com API</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
