@@ -53,13 +53,19 @@ public class MediaUploadService {
         request.setAesKey(bytesToHex(aesKey));
 
         ApiModels.GetUploadUrlResponse uploadUrlResp = apiClient.getUploadUrl(request);
-        String uploadParam = uploadUrlResp.getUploadParam();
-        if (uploadParam == null || uploadParam.isEmpty()) {
-            throw new IOException("getUploadUrl returned no upload_param");
-        }
 
-        String downloadParam = cdnClient.uploadBuffer(plaintext, uploadParam, fileKey, cdnBaseUrl, aesKey,
-                "UploadFile[fileKey=" + fileKey + "]");
+        String downloadParam;
+        if (uploadUrlResp.getUploadFullUrl() != null && !uploadUrlResp.getUploadFullUrl().isEmpty()) {
+            downloadParam = cdnClient.uploadBufferByUrl(plaintext, uploadUrlResp.getUploadFullUrl(), aesKey,
+                    "UploadFile[fileKey=" + fileKey + "]");
+        } else {
+            String uploadParam = uploadUrlResp.getUploadParam();
+            if (uploadParam == null || uploadParam.isEmpty()) {
+                throw new IOException("getUploadUrl returned no upload_param and no upload_full_url");
+            }
+            downloadParam = cdnClient.uploadBuffer(plaintext, uploadParam, fileKey, cdnBaseUrl, aesKey,
+                    "UploadFile[fileKey=" + fileKey + "]");
+        }
 
         UploadedFileInfo info = new UploadedFileInfo();
         info.fileKey = fileKey;

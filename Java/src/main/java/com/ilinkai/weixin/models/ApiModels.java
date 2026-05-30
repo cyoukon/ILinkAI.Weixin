@@ -51,11 +51,17 @@ public class ApiModels {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class GetUploadUrlResponse {
         @JsonProperty("upload_param") private String uploadParam;
+        @JsonProperty("upload_full_url") private String uploadFullUrl;
         @JsonProperty("thumb_upload_param") private String thumbUploadParam;
+        @JsonProperty("thumb_upload_full_url") private String thumbUploadFullUrl;
         public String getUploadParam() { return uploadParam; }
         public void setUploadParam(String v) { this.uploadParam = v; }
+        public String getUploadFullUrl() { return uploadFullUrl; }
+        public void setUploadFullUrl(String v) { this.uploadFullUrl = v; }
         public String getThumbUploadParam() { return thumbUploadParam; }
         public void setThumbUploadParam(String v) { this.thumbUploadParam = v; }
+        public String getThumbUploadFullUrl() { return thumbUploadFullUrl; }
+        public void setThumbUploadFullUrl(String v) { this.thumbUploadFullUrl = v; }
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

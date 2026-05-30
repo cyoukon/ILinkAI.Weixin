@@ -49,7 +49,7 @@ class MessageSendService:
         uploaded = self._upload_service.upload_image(file_path, to_user_id)
         media = CdnMedia(
             encrypt_query_param=uploaded.download_encrypted_query_param,
-            aes_key=base64.b64encode(bytes.fromhex(uploaded.aes_key)).decode(),
+            aes_key=base64.b64encode(uploaded.aes_key.encode('utf-8')).decode(),
             encrypt_type=1,
         )
         image_item = MessageItem(
@@ -82,7 +82,7 @@ class MessageSendService:
         uploaded = self._upload_service.upload_file_attachment(file_path, to_user_id)
         media = CdnMedia(
             encrypt_query_param=uploaded.download_encrypted_query_param,
-            aes_key=base64.b64encode(bytes.fromhex(uploaded.aes_key)).decode(),
+            aes_key=base64.b64encode(uploaded.aes_key.encode('utf-8')).decode(),
             encrypt_type=1,
         )
         file_item = MessageItem(

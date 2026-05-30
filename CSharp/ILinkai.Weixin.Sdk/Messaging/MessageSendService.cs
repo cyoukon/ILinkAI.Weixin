@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace ILinkai.Weixin.Sdk.Messaging;
@@ -126,7 +127,7 @@ public class MessageSendService
                 Media = new Models.CdnMedia
                 {
                     EncryptQueryParam = uploaded.DownloadEncryptedQueryParam,
-                    AesKey = Convert.ToBase64String(Convert.FromHexString(uploaded.AesKey)),
+                    AesKey = Convert.ToBase64String(Encoding.UTF8.GetBytes(uploaded.AesKey)),
                     EncryptType = 1
                 },
                 MidSize = uploaded.FileSizeCiphertext
@@ -168,7 +169,7 @@ public class MessageSendService
                 Media = new Models.CdnMedia
                 {
                     EncryptQueryParam = uploaded.DownloadEncryptedQueryParam,
-                    AesKey = Convert.ToBase64String(Convert.FromHexString(uploaded.AesKey)),
+                    AesKey = Convert.ToBase64String(Encoding.UTF8.GetBytes(uploaded.AesKey)),
                     EncryptType = 1
                 },
                 VideoSize = uploaded.FileSizeCiphertext
@@ -211,7 +212,7 @@ public class MessageSendService
                 Media = new Models.CdnMedia
                 {
                     EncryptQueryParam = uploaded.DownloadEncryptedQueryParam,
-                    AesKey = Convert.ToBase64String(Convert.FromHexString(uploaded.AesKey)),
+                    AesKey = Convert.ToBase64String(Encoding.UTF8.GetBytes(uploaded.AesKey)),
                     EncryptType = 1
                 },
                 FileName = fileName,

@@ -44,8 +44,28 @@ public class CdnClient
         string label = "upload",
         CancellationToken cancellationToken = default)
     {
-        var ciphertext = AesEcbCrypto.Encrypt(buffer, aesKey);
         var cdnUrl = CdnUrlBuilder.BuildUploadUrl(uploadParam, fileKey, cdnBaseUrl);
+        return await UploadBufferCoreAsync(buffer, cdnUrl, aesKey, label, cancellationToken);
+    }
+
+    public async Task<string> UploadBufferByUrlAsync(
+        byte[] buffer,
+        string uploadFullUrl,
+        byte[] aesKey,
+        string label = "upload",
+        CancellationToken cancellationToken = default)
+    {
+        return await UploadBufferCoreAsync(buffer, uploadFullUrl, aesKey, label, cancellationToken);
+    }
+
+    private async Task<string> UploadBufferCoreAsync(
+        byte[] buffer,
+        string cdnUrl,
+        byte[] aesKey,
+        string label,
+        CancellationToken cancellationToken)
+    {
+        var ciphertext = AesEcbCrypto.Encrypt(buffer, aesKey);
 
         _logger?.LogDebug("{Label}: CDN POST url={Url} ciphertextSize={Size}", label, RedactUrl(cdnUrl), ciphertext.Length);
 
