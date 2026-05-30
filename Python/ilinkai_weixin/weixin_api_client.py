@@ -128,7 +128,9 @@ class WeixinApiClient:
         data = json.loads(raw_text)
         return GetUploadUrlResponse(
             upload_param=data.get('upload_param'),
+            upload_full_url=data.get('upload_full_url'),
             thumb_upload_param=data.get('thumb_upload_param'),
+            thumb_upload_full_url=data.get('thumb_upload_full_url'),
         )
 
     def send_message(self, request: SendMessageRequest) -> None:

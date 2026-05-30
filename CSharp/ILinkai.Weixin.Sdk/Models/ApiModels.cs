@@ -85,17 +85,17 @@ public class GetUploadUrlRequest
 /// </summary>
 public class GetUploadUrlResponse
 {
-    /// <summary>
-    /// 原图上传加密参数
-    /// </summary>
     [JsonPropertyName("upload_param")]
     public string? UploadParam { get; set; }
 
-    /// <summary>
-    /// 缩略图上传加密参数，无缩略图时为空
-    /// </summary>
+    [JsonPropertyName("upload_full_url")]
+    public string? UploadFullUrl { get; set; }
+
     [JsonPropertyName("thumb_upload_param")]
     public string? ThumbUploadParam { get; set; }
+
+    [JsonPropertyName("thumb_upload_full_url")]
+    public string? ThumbUploadFullUrl { get; set; }
 }
 
 /// <summary>

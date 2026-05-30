@@ -189,7 +189,9 @@ class GetUploadUrlRequest:
 @dataclass
 class GetUploadUrlResponse:
     upload_param: Optional[str] = None
+    upload_full_url: Optional[str] = None
     thumb_upload_param: Optional[str] = None
+    thumb_upload_full_url: Optional[str] = None
 
 
 @dataclass
