@@ -60,6 +60,8 @@ public class MessageMonitorService : IDisposable
     private CancellationTokenSource? _cancellationTokenSource;
     private bool _disposed;
 
+    private readonly StatusChangedEventArgs _status = new();
+
     /// <summary>
     /// 接收到消息时触发
     /// </summary>
@@ -93,6 +95,7 @@ public class MessageMonitorService : IDisposable
         }, logger);
         _sessionGuard = new Auth.SessionGuard();
         _messageProcessor = new MessageProcessor(options.CdnBaseUrl, logger);
+        _status.AccountId = options.AccountId;
 
         var stateDir = GetStateDir();
         Directory.CreateDirectory(stateDir);
@@ -157,12 +160,9 @@ public class MessageMonitorService : IDisposable
         _logger?.LogInformation("Monitor started: baseUrl={BaseUrl} accountId={AccountId}",
             _options.BaseUrl, _options.AccountId);
 
-        StatusChanged?.Invoke(this, new StatusChangedEventArgs
-        {
-            AccountId = _options.AccountId,
-            Running = true,
-            LastStartAt = DateTime.UtcNow
-        });
+        _status.Running = true;
+        _status.LastStartAt = DateTime.UtcNow;
+        StatusChanged?.Invoke(this, _status);
 
         var syncBuf = LoadSyncBuf();
         var nextTimeoutMs = _options.LongPollTimeoutMs;
@@ -229,11 +229,8 @@ public class MessageMonitorService : IDisposable
                 }
 
                 consecutiveFailures = 0;
-                StatusChanged?.Invoke(this, new StatusChangedEventArgs
-                {
-                    AccountId = _options.AccountId,
-                    LastEventAt = DateTime.UtcNow
-                });
+                _status.LastEventAt = DateTime.UtcNow;
+                StatusChanged?.Invoke(this, _status);
 
                 if (!string.IsNullOrEmpty(response.GetUpdatesBuf))
                 {
@@ -248,12 +245,9 @@ public class MessageMonitorService : IDisposable
                         msg.FromUserId,
                         string.Join(",", msg.ItemList?.Select(i => i.Type) ?? Array.Empty<int?>()));
 
-                    StatusChanged?.Invoke(this, new StatusChangedEventArgs
-                    {
-                        AccountId = _options.AccountId,
-                        LastEventAt = DateTime.UtcNow,
-                        LastInboundAt = DateTime.UtcNow
-                    });
+                    _status.LastEventAt = DateTime.UtcNow;
+                    _status.LastInboundAt = DateTime.UtcNow;
+                    StatusChanged?.Invoke(this, _status);
 
                     var context = _messageProcessor.ConvertToContext(msg, _options.AccountId);
 
@@ -303,11 +297,8 @@ public class MessageMonitorService : IDisposable
             }
         }
 
-        StatusChanged?.Invoke(this, new StatusChangedEventArgs
-        {
-            AccountId = _options.AccountId,
-            Running = false
-        });
+        _status.Running = false;
+        StatusChanged?.Invoke(this, _status);
 
         _logger?.LogInformation("Monitor ended");
     }
