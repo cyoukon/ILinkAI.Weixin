@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>ILinkai.Weixin.Sdk</PackageId>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Tencent</Authors>
     <Description>ILinkai Weixin SDK - A comprehensive SDK for ilinkai.weixin.qq.com API</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RootNamespace>ILinkai.Weixin.Sdk</RootNamespace>
     <PackageTags>weixin;wechat;ilinkai;sdk;messaging</PackageTags>
-    <PackageReleaseNotes>Fix AesKey encoding causing images not displaying in chat window; Add upload_full_url support</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix StatusChangedEventArgs losing previous property values on each event invocation</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RepositoryUrl>https://github.com/cyoukon/ILinkAI.Weixin</RepositoryUrl>
