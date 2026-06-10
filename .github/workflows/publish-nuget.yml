@@ -1,4 +1,4 @@
-name: Publish NuGet Package
+name: Publish NuGet Packages
 
 on:
   push:
@@ -10,10 +10,18 @@ on:
         description: 'Version to publish (e.g., 1.0.1)'
         required: false
         default: ''
+      packages:
+        description: 'Packages to publish (sdk, sqlserver, or both)'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - sdk
+          - sqlserver
 
 env:
   DOTNET_VERSION: '10.0.x'
-  PROJECT_PATH: 'CSharp/ILinkai.Weixin.Sdk/ILinkai.Weixin.Sdk.csproj'
   PACKAGE_OUTPUT: './artifacts'
 
 jobs:
@@ -30,10 +38,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }}
+        run: dotnet restore CSharp/ILinkai.Weixin.slnx
         
-      - name: Build project
-        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+      - name: Build solution
+        run: dotnet build CSharp/ILinkai.Weixin.slnx --configuration Release --no-restore
         
       - name: Get version from tag
         id: get_version
@@ -45,9 +53,19 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           
-      - name: Pack NuGet package
+      - name: Pack SDK package
+        if: ${{ github.event.inputs.packages == 'both' || github.event.inputs.packages == 'sdk' || github.event_name == 'push' }}
         run: |
-          dotnet pack ${{ env.PROJECT_PATH }} \
+          dotnet pack CSharp/ILinkai.Weixin.Sdk/ILinkai.Weixin.Sdk.csproj \
+            --configuration Release \
+            --output ${{ env.PACKAGE_OUTPUT }} \
+            --no-build \
+            -p:PackageVersion=${{ steps.get_version.outputs.version }}
+            
+      - name: Pack SqlServer package
+        if: ${{ github.event.inputs.packages == 'both' || github.event.inputs.packages == 'sqlserver' || github.event_name == 'push' }}
+        run: |
+          dotnet pack CSharp/ILinkai.Weixin.Sdk.SqlServer/ILinkai.Weixin.Sdk.SqlServer.csproj \
             --configuration Release \
             --output ${{ env.PACKAGE_OUTPUT }} \
             --no-build \

@@ -75,7 +75,7 @@ public class ResolvedWeixinAccount
 /// 账户存储服务
 /// 管理微信账户的持久化存储
 /// </summary>
-public class AccountStore
+public class AccountStore : IAccountStore
 {
     private readonly string _stateDir;
     private readonly ILogger? _logger;

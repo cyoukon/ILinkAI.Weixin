@@ -5,14 +5,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageId>ILinkai.Weixin.Sdk</PackageId>
+    <PackageId>ILinkai.Weixin.Sdk.SqlServer</PackageId>
     <Version>1.0.5</Version>
     <Authors>cyoukon</Authors>
-    <Description>ILinkai Weixin SDK - A comprehensive SDK for ilinkai.weixin.qq.com API</Description>
+    <Description>SQL Server storage implementation for ILinkai.Weixin.Sdk</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RootNamespace>ILinkai.Weixin.Sdk</RootNamespace>
-    <PackageTags>weixin;wechat;ilinkai;sdk;messaging</PackageTags>
-    <PackageReleaseNotes>Fix StatusChangedEventArgs losing previous property values on each event invocation</PackageReleaseNotes>
+    <RootNamespace>ILinkai.Weixin.Sdk.SqlServer</RootNamespace>
+    <PackageTags>weixin;wechat;ilinkai;sdk;sqlserver;storage</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RepositoryUrl>https://github.com/cyoukon/ILinkAI.Weixin</RepositoryUrl>
@@ -22,8 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ILinkai.Weixin.Sdk\ILinkai.Weixin.Sdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>

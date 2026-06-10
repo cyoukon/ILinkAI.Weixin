@@ -15,6 +15,16 @@ ILinkai微信SDK - 用于ilinkai.weixin.qq.com API的完整C#开发包
 
 ## 安装
 
+### NuGet包
+
+```bash
+# 安装核心SDK
+dotnet add package ILinkai.Weixin.Sdk
+
+# 安装SQL Server存储扩展（可选）
+dotnet add package ILinkai.Weixin.Sdk.SqlServer
+```
+
 ### 从源码构建
 
 ```bash
@@ -27,9 +37,11 @@ dotnet build src/ILinkai.Weixin.Sdk
 
 # 打包 NuGet 包（本地使用）
 dotnet pack src/ILinkai.Weixin.Sdk -c Release -o ./nupkg
+dotnet pack src/ILinkai.Weixin.Sdk.SqlServer -c Release -o ./nupkg
 
 # 从本地包安装
 dotnet add package ILinkai.Weixin.Sdk --source ./nupkg
+dotnet add package ILinkai.Weixin.Sdk.SqlServer --source ./nupkg
 ```
 
 ### CLI工具
@@ -154,6 +166,95 @@ var imageData = await downloadService.DownloadImageAsync(
     aesKeyBase64: "base64-encoded-aes-key");
 
 await downloadService.SaveMediaToFileAsync(imageData, "/save/path", "image.jpg");
+```
+
+### 6. 存储配置
+
+SDK支持两种存储方式：文件存储（默认）和SQL Server存储。
+
+#### 文件存储（默认）
+
+```csharp
+using ILinkai.Weixin.Sdk.Auth;
+using Microsoft.Extensions.DependencyInjection;
+
+var services = new ServiceCollection();
+
+// 默认使用文件存储
+services.AddWeixinStorage();
+
+// 或指定自定义状态目录
+services.AddWeixinStorage("/custom/state/dir");
+
+var serviceProvider = services.BuildServiceProvider();
+var accountStore = serviceProvider.GetRequiredService<IAccountStore>();
+```
+
+#### SQL Server存储
+
+```csharp
+using ILinkai.Weixin.Sdk.Auth;
+using ILinkai.Weixin.Sdk.SqlServer;
+using Microsoft.Extensions.DependencyInjection;
+
+var services = new ServiceCollection();
+
+// 添加默认文件存储（可选）
+services.AddWeixinStorage();
+
+// 切换到SQL Server存储（会替换文件存储）
+services.AddWeixinSqlServerStorage("Server=localhost;Database=WeixinAccounts;Trusted_Connection=True;");
+
+var serviceProvider = services.BuildServiceProvider();
+var accountStore = serviceProvider.GetRequiredService<IAccountStore>();
+```
+
+#### 自定义DbContext配置
+
+```csharp
+services.AddWeixinSqlServerStorage(options =>
+{
+    options.UseSqlServer("YourConnectionString", sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 3);
+    });
+});
+```
+
+#### 初始化数据库
+
+```csharp
+using ILinkai.Weixin.Sdk.SqlServer;
+using Microsoft.EntityFrameworkCore;
+
+var options = new DbContextOptionsBuilder<AccountDbContext>()
+    .UseSqlServer("YourConnectionString")
+    .Options;
+
+using var context = new AccountDbContext(options);
+
+// 创建数据库和表
+context.Database.EnsureCreated();
+
+// 或使用迁移（推荐生产环境）
+// dotnet ef migrations add InitialCreate --project ILinkai.Weixin.Sdk.SqlServer
+// dotnet ef database update
+```
+
+#### 数据库表结构
+
+```sql
+CREATE TABLE Accounts (
+    AccountId NVARCHAR(256) PRIMARY KEY,
+    Token NVARCHAR(MAX),
+    SavedAt DATETIME2,
+    BaseUrl NVARCHAR(512),
+    UserId NVARCHAR(256),
+    CreatedAt DATETIME2 NOT NULL,
+    UpdatedAt DATETIME2 NOT NULL
+);
+
+CREATE INDEX IX_Accounts_UserId ON Accounts(UserId);
 ```
 
 ## CLI使用
@@ -285,10 +386,21 @@ ilinkai-sdk/
 │   ├── ILinkai.Weixin.Sdk/           # SDK核心库
 │   │   ├── Models/                   # 数据模型
 │   │   ├── Auth/                     # 认证模块
+│   │   │   ├── IAccountStore.cs      # 存储接口
+│   │   │   ├── AccountStore.cs       # 文件存储实现
+│   │   │   ├── ServiceCollectionExtensions.cs # DI扩展
+│   │   │   ├── QRCodeLoginService.cs
+│   │   │   └── SessionGuard.cs
 │   │   ├── Cdn/                      # CDN加密/上传/下载
 │   │   ├── Media/                    # 媒体处理
 │   │   ├── Messaging/                # 消息收发
 │   │   └── WeixinApiClient.cs        # API客户端
+│   ├── ILinkai.Weixin.Sdk.SqlServer/ # SQL Server存储扩展
+│   │   ├── Models/
+│   │   │   └── AccountEntity.cs      # 实体模型
+│   │   ├── AccountDbContext.cs       # EF Core DbContext
+│   │   ├── SqlServerAccountStore.cs  # SQL Server存储实现
+│   │   └── ServiceCollectionExtensions.cs # DI扩展
 │   └── ILinkai.Weixin.Cli/           # 命令行工具
 │       ├── Commands/                 # 命令模块
 │       │   ├── ICommand.cs           # 命令接口
